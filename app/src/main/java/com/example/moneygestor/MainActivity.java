@@ -158,6 +158,12 @@ public class MainActivity extends AppCompatActivity {
         if(userLoggedIcon != null) userLoggedIcon.setIcon(remoteDB.isUserLogged()? R.drawable.login : R.drawable.no_login);
         fabAddTransaction.setEnabled(remoteDB.isUserLogged());
 
+        if(fabClicked) {
+            setVisibilityMiniFab(false);
+            startAnimationFab(false);
+            fabClicked = false;
+        }
+
     }
 
     @Override
