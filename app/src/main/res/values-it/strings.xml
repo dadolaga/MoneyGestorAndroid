@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MoneyGestor</string>
+    <string name="transaction_description">Descrizione</string>
+    <string name="transaction_value">Valore della transazione</string>
+    <string name="settings">Impostazioni</string>
+    <string name="change_ip">Cambia IP</string>
+    <string name="ip_address">Indirizzo IP</string>
+    <string name="confirm">Conferma</string>
+    <string name="cancel">Annulla</string>
+    <string name="insert_ip_message">Inserici il nuovo indirizzo IP</string>
+    <string name="server">Server</string>
+    <string name="server_ip">Indirizzo IP</string>
+    <string name="server_port">Porta</string>
+    <string name="server_info_not_valid">Indirizzo IP o la porta del server non sono valide</string>
+    <string name="attention">Attenzione!</string>
+    <string name="server_ip_not_valid_message">Inserire un indirizzo IP valido per il server</string>
+    <string name="server_port_not_valid_message">Inserire una porta valida per il server</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="token">Token di connessione</string>
+    <string name="user_info_title">Informazioni utente</string>
+    <string name="user_not_logged">Utente non registrato</string>
+    <string name="user_logged_but_no_name">Utente registrato ma per ottenere le informazioni è necessario connettersi al server remoto</string>
+    <string name="error_general">Errore imprevisto</string>
+    <string name="transaction_name">Nome transazione</string>
+    <string name="transaction_date">Data transazione</string>
+    <string name="save">Salva</string>
+</resources>

@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">MoneyGestor</string>
+
+    <string name="transaction_description">Description</string>
+    <string name="transaction_value">Transaction value</string>
+    <string name="settings">Settings</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="change_ip">Change IP</string>
+    <string name="ip_address">IP address</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="insert_ip_message">Insert new IP address</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="server">Server</string>
+    <string name="server_ip">IP address</string>
+    <string name="server_port">Port</string>
+    <string name="server_info_not_valid">Server IP or port are not valid</string>
+    <string name="attention">Attention!</string>
+    <string name="server_ip_not_valid_message">Insert a valid IP for the server</string>
+    <string name="server_port_not_valid_message">Insert a valid port for the server</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="token">Connection token</string>
+    <string name="user_info_title">User information</string>
+    <string name="user_not_logged">User not logged</string>
+    <string name="user_logged_but_no_name">User logged but you must connect to the remote server for take information</string>
+    <string name="error_general">Unexpected error</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="next">Next</string>
+
+    <string name="transaction_name">Transaction name</string>
+    <string name="transaction_date">Transaction date</string>
+    <string name="save">Save</string>
+</resources>

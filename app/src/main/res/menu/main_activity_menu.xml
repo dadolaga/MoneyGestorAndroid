@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- "Mark Favorite", should appear as action button if possible -->
+    <item
+        android:id="@+id/server_connected"
+        android:icon="@drawable/server_no_connect"
+        android:title="Server connected"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/login"
+        android:icon="@drawable/no_login"
+        android:title="Login"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/change_ip"
+        android:icon="@drawable/gear"
+        android:title="@string/settings"
+        app:showAsAction="never"/>
+
+</menu>
