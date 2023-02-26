@@ -11,13 +11,16 @@ import android.widget.Spinner;
 
 import com.example.moneygestor.data.Genders;
 import com.example.moneygestor.data.KeyValue;
+import com.example.moneygestor.data.User;
 import com.example.moneygestor.data.Wallets;
 import com.example.moneygestor.database.RemoteDB;
 import com.example.moneygestor.database.SynchronizeServer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,6 +54,10 @@ public class AddTransactionActivity extends AppCompatActivity {
             walletAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spiWallet.setAdapter(walletAdapter);
 
+            ArrayAdapter<User> userAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, (List<User>) getIntent().getSerializableExtra("users"));
+            userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spiUser.setAdapter(userAdapter);
+
             btnSave.setOnClickListener(view -> {
                 System.out.println(((KeyValue<Integer, String>) spiWallet.getSelectedItem()).getKey());
             });
@@ -62,6 +69,8 @@ public class AddTransactionActivity extends AppCompatActivity {
                         finish();
                     })
                     .show();
+
+            ex.printStackTrace();
         }
 
         btnCancel.setOnClickListener(view -> finish());

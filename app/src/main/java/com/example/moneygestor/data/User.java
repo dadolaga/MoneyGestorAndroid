@@ -1,6 +1,13 @@
 package com.example.moneygestor.data;
 
-public class User {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+import java.io.Serializable;
+
+public class User implements Serializable {
     private int id;
     private String name, surname;
 
@@ -8,6 +15,12 @@ public class User {
         this.id = id;
         this.name = name;
         this.surname = surname;
+    }
+
+    protected User(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        surname = in.readString();
     }
 
     public int getId() {
@@ -28,6 +41,10 @@ public class User {
 
     @Override
     public String toString() {
+        return getFullName();
+    }
+
+    public String toDebugString() {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +

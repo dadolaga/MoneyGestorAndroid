@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, AddTransactionActivity.class);
                 intent.putExtra("genders", genders);
                 intent.putExtra("wallets", wallets);
+                intent.putExtra("users", users);
                 startActivity(intent);
             }).start();
         });
