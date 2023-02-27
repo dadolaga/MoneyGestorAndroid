@@ -89,14 +89,16 @@
             android:layout_marginBottom="@dimen/editText_icon_margin_bottom"
             app:srcCompat="@drawable/calendar" />
 
-        <EditText
-            android:id="@+id/transaction_editText_date"
+        <TextView
+            android:id="@+id/transaction_textView_date"
             android:layout_width="0dp"
             android:layout_height="@dimen/editText_height"
             android:layout_weight="1"
-            android:hint="@string/transaction_date"
-            android:inputType="date"
-            android:minEms="2" />
+            android:text="TextView"
+            android:textSize="18dp"
+            android:paddingLeft="7dp"
+            android:gravity="center_vertical"
+            android:textAlignment="gravity"/>
 
     </LinearLayout>
 

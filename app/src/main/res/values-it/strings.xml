@@ -26,4 +26,6 @@
     <string name="transaction_name">Nome transazione</string>
     <string name="transaction_date">Data transazione</string>
     <string name="save">Salva</string>
+    <string name="date_format">dd/MM/yyyy</string>
+    <string name="transaction_insert_all_data">Inserisci tutte le informazioni</string>
 </resources>

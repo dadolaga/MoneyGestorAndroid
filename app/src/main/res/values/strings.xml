@@ -46,4 +46,6 @@
     <string name="transaction_name">Transaction name</string>
     <string name="transaction_date">Transaction date</string>
     <string name="save">Save</string>
+    <string name="date_format">yyyy-MM-dd</string>
+    <string name="transaction_insert_all_data">Insert all required data</string>
 </resources>
