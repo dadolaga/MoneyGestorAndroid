@@ -23,6 +23,7 @@ public class LocalDB implements Database{
     public static final String TABLE_GENDER = "gender";
     public static final String TABLE_WALLET = "wallet";
     public static final String TABLE_USER = "user";
+    public static final String TABLE_TRANSACTION = "transition";
     private SQLiteDatabase database;
     private Context context;
 
@@ -92,6 +93,19 @@ public class LocalDB implements Database{
         database.endTransaction();
     }
 
+    @Override
+    public int insertQuery(String sql, Object... values) throws java.sql.SQLException {
+        String[] stringValues = new String[values.length];
+
+        int i = 0;
+        for(Object value : values)
+            stringValues[i++] = value.toString();
+
+        database.execSQL(sql, stringValues);
+
+        return NOT_GENERATED_KEY;
+    }
+
     public void executeSingleQuery(String sql) {
         database.execSQL(sql);
     }
@@ -105,6 +119,7 @@ public class LocalDB implements Database{
         createGenderTable();
         createWalletTable();
         createUserTable();
+        createTransactionTable();
     }
 
     private void createGenderTable() {
@@ -126,97 +141,21 @@ public class LocalDB implements Database{
                 "Surname VARCHAR(100) NOT NULL)");
     }
 
-    public void createDatabaseFromJSON(JSONObject json) {
-        try {
-            JSONArray tables = json.getJSONArray("tables");
-
-            for(int i=0; i<tables.length(); i++) {
-                database.execSQL(generateSQLTableFromJson(tables.getJSONObject(i)));
-            }
-
-            JSONArray trigger = json.getJSONArray("triggers");
-
-            for(int i=0; i<trigger.length(); i++) {
-                System.out.println(trigger);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String generateSQLTableFromJson(JSONObject table) throws JSONException {
-        StringBuilder builder = new StringBuilder();
-        boolean isAutoIncrement = false;
-
-        builder.append("CREATE TABLE IF NOT EXISTS ")
-                .append(table.getString("name"))
-                .append("(");
-
-        JSONArray attributes = table.getJSONArray("attributes");
-        for(int i=0; i<attributes.length(); i++) {
-            JSONObject attribute = attributes.getJSONObject(i);
-
-            if(attribute.getBoolean("autoIncrement")) {
-                builder.append(attribute.getString("name"))
-                        .append(" INTEGER PRIMARY KEY AUTOINCREMENT");
-
-                isAutoIncrement = true;
-            } else {
-                builder.append(attribute.getString("name"))
-                        .append(" ")
-                        .append(attribute.getString("type")).append(" ");
-
-                if (!attribute.getBoolean("nullable"))
-                    builder.append("NOT NULL").append(" ");
-
-                try {
-                    String defaultValue = attribute.getString("default");
-
-                    builder.append("DEFAULT \"")
-                            .append(defaultValue).append("\" ");
-                } catch (JSONException ignored) {
-                }
-            }
-
-            builder.append(i < attributes.length()-1? "," : "");
-        }
-
-        if(!isAutoIncrement) {
-            builder.append(" PRIMARY KEY (");
-            for (int i = 0; i < table.getJSONArray("primaryKey").length(); i++)
-                builder.append(table.getJSONArray("primaryKey").getString(i)).append(i < table.getJSONArray("primaryKey").length() - 1 ? "," : "");
-            builder.append(")");
-        }
-
-        for (int i = 0; i <table.getJSONArray("foreignKey").length(); i++) {
-            JSONObject foreignKey = table.getJSONArray("foreignKey").getJSONObject(i);
-
-            builder.append(", FOREIGN KEY (")
-                    .append(foreignKey.getString("fromColumn")).append(") ")
-                    .append("REFERENCES ").append(foreignKey.getString("toTable")).append("(").append(foreignKey.getString("toColumn")).append(")")
-                    .append(" ON DELETE ").append(foreignKey.getString("onDelete"))
-                    .append(" ON UPDATE ").append(foreignKey.getString("onUpdate"));
-        }
-
-        return builder.append(")").toString();
-    }
-
-    private String generateSQLForeignKeyFromJson(JSONObject json) throws JSONException {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("ALTER TABLE ")
-                .append(json.getString("fromTable"))
-                .append(" ADD ")
-                .append(json.getString("fromColumn"))
-                .append(" CONSTRAINT ")
-                .append(json.getString("name"))
-                .append(" REFERENCES ")
-                .append(json.getString("toTable"))
-                .append("(").append(json.getString("toColumn")).append(")")
-                .append(" ON DELETE ").append(json.getString("onDelete"))
-                .append(" ON UPDATE ").append(json.getString("onUpdate"));
-
-        return builder.toString();
+    private void createTransactionTable() {
+        database.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_TRANSACTION + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "Description VARCHAR(255) DEFAULT NULL," +
+                "Value DECIMAL(65,2) NOT NULL," +
+                "Date DATE NOT NULL, " +
+                "Wallet INTEGR NOT NULL," +
+                "UserTransaction INTEGR NOT NULL," +
+                "UserAdded INTEGR NOT NULL," +
+                "Gender INTEGR NOT NULL," +
+                "ExchangeDestination INTEGR DEFAULT NULL," +
+                "FOREIGN KEY (Wallet) REFERENCES wallet(id) ON DELETE CASCADE ON UPDATE CASCADE," +
+                "FOREIGN KEY (UserTransaction) REFERENCES user(id) ON DELETE RESTRICT ON UPDATE RESTRICT," +
+                "FOREIGN KEY (UserAdded) REFERENCES user(id) ON DELETE RESTRICT ON UPDATE RESTRICT," +
+                "FOREIGN KEY (Gender) REFERENCES gender(id) ON DELETE RESTRICT ON UPDATE RESTRICT)");
     }
 
     public void createDbOrOpen() {

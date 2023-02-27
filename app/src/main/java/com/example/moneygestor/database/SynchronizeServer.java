@@ -25,6 +25,10 @@ public class SynchronizeServer {
         return null;
     }
 
+    public static int getUserLogged() {
+        return remote.getLoggedUserId();
+    }
+
     public static boolean isRemote() {
         return getDatabase() instanceof RemoteDB;
     }

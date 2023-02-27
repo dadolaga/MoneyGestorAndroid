@@ -8,10 +8,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Message;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -37,7 +39,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AddTransactionActivity extends AppCompatActivity {
+public class AddTransactionActivity extends AppCompatActivity implements LoadingInterface {
 
     EditText editName, editValue;
     TextView viewDate;
@@ -47,6 +49,8 @@ public class AddTransactionActivity extends AppCompatActivity {
     private Transaction transaction;
     private DateFormat dateFormat;
     private Calendar newDate;
+
+    ProgressBar progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,8 @@ public class AddTransactionActivity extends AppCompatActivity {
 
         btnSave = findViewById(R.id.transaction_button_save);
         btnCancel = findViewById(R.id.transaction_button_cancel);
+
+        progress = findViewById(R.id.transaction_progress);
 
         transaction = new Transaction();
 
@@ -93,6 +99,32 @@ public class AddTransactionActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
 
+        btnSave.setOnClickListener(view -> {
+            if(editName.getText().toString().isEmpty() || editValue.getText().toString().isEmpty()) {
+                new AlertDialog.Builder(this)
+                        .setMessage(R.string.transaction_insert_all_data)
+                        .show();
+
+                return;
+            }
+
+            try {
+                transaction.setDescription(editName.getText().toString().trim());
+                transaction.setValue(Double.parseDouble(editValue.getText().toString()));
+                transaction.setWallet(((KeyValue<Integer, String>) spiWallet.getSelectedItem()).getKey());
+                transaction.setUser(((User) spiUser.getSelectedItem()));
+                transaction.setGender(((KeyValue<Integer, String>) spiGender.getSelectedItem()).getKey());
+            } catch (ClassCastException | NumberFormatException ignored) {
+                new AlertDialog.Builder(this)
+                        .setMessage(R.string.error_general)
+                        .show();
+            }
+
+            new SaveTransactionThread(transaction, this, this).start();
+
+            System.out.println(transaction);
+        });
+
         viewDate.setOnClickListener(view -> {
             if(getCurrentFocus() != null) getCurrentFocus().clearFocus();
 
@@ -115,5 +147,49 @@ public class AddTransactionActivity extends AppCompatActivity {
         });
 
         btnCancel.setOnClickListener(view -> finish());
+    }
+
+    @Override
+    public void show(boolean indeterminate) {
+        runOnUiThread(() -> {
+            progress.setIndeterminate(indeterminate);
+            progress.setVisibility(View.VISIBLE);
+
+            btnSave.setEnabled(false);
+        });
+    }
+
+    @Override
+    public void hide() {
+        runOnUiThread(() -> {
+            progress.setVisibility(View.GONE);
+
+            btnSave.setEnabled(true);
+        });
+    }
+
+    @Override
+    public void setMaximus(int maximus) {
+        runOnUiThread(() -> {
+            progress.setIndeterminate(false);
+            progress.setMax(maximus);
+
+            reset();
+        });
+    }
+
+    @Override
+    public boolean increment(int value) {
+        int actualValue = progress.getProgress();
+        if(actualValue + value > progress.getMax())
+            return false;
+
+        progress.setProgress(actualValue + value);
+        return true;
+    }
+
+    @Override
+    public void reset() {
+        progress.setProgress(0);
     }
 }

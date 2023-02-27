@@ -31,7 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoadingInterface{
     private SharedPreferences preferences;
     private RemoteDB remoteDB;
     private LocalDB localDB;
@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         fabAddTransaction = findViewById(R.id.fab);
 
         preferences = getSharedPreferences("com.example.moneygestor_preferences", MODE_PRIVATE);
-        System.out.println(preferences.getString("server_ip", null));
 
         fabAddTransaction.setOnClickListener(view -> {
             setVisibilityMiniFab(!fabClicked);
@@ -83,11 +82,11 @@ public class MainActivity extends AppCompatActivity {
 
         fabAddMoney.setOnClickListener(view -> {
             new Thread(() -> {
-                runOnUiThread(this::showLoadingIndeterminate);
+                runOnUiThread(this::show);
 
                 SynchronizeServer.synchronize(genders, wallets, users);
 
-                runOnUiThread(this::hideLoadingIndeterminate);
+                runOnUiThread(this::hide);
 
                 Intent intent = new Intent(this, AddTransactionActivity.class);
                 intent.putExtra("genders", genders);
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         SynchronizeServer.setServer(remoteDB, localDB);
 
         new Thread(() -> {
-            runOnUiThread(this::showLoadingIndeterminate);
+            runOnUiThread(this::show);
 
             genders.loadFromLocalDatabase(localDB);
             wallets.loadFromLocalDatabase(localDB);
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
             System.out.println("Users: " + users);
 
-            runOnUiThread(this::hideLoadingIndeterminate);
+            runOnUiThread(this::hide);
         }).start();
 
         // Database test
@@ -195,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.login:
                 new Thread(() -> {
-                    runOnUiThread(this::showLoadingIndeterminate);
+                    runOnUiThread(this::hide);
 
                     String message = getString(R.string.user_not_logged);
 
@@ -218,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
                     final String finalMessage = message;
                     runOnUiThread(() -> {
-                        hideLoadingIndeterminate();
+                        hide();
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(this);
                         builder.setTitle(R.string.user_info_title)
@@ -245,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
     private void tryToConnectToServer() {
         try {
             runOnUiThread(() -> {
-                showLoadingIndeterminate();
+                show();
 
                 if(connectToServerIcon != null) connectToServerIcon.setIcon(R.drawable.server_no_connect);
             });
@@ -258,31 +257,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         runOnUiThread(() -> {
-            hideLoadingIndeterminate();
+            hide();
 
             if(remoteDB.isConnected())
                 if(connectToServerIcon != null) connectToServerIcon.setIcon(R.drawable.server);
 
             if(userLoggedIcon != null) userLoggedIcon.setIcon(remoteDB.isUserLogged()? R.drawable.login : R.drawable.no_login);
         });
-    }
-
-    public void showLoadingIndeterminate() {
-        progress.setVisibility(View.VISIBLE);
-        progress.setIndeterminate(true);
-
-        fabAddTransaction.setEnabled(false);
-
-        showCount++;
-    }
-
-    public void hideLoadingIndeterminate() {
-        if(--showCount != 0)
-            return;
-
-        progress.setVisibility(View.GONE);
-
-        fabAddTransaction.setEnabled(true);
     }
 
     private void setVisibilityMiniFab(boolean visibility) {
@@ -297,5 +278,48 @@ public class MainActivity extends AppCompatActivity {
         fabAddMoney.startAnimation(visibility? fromBottom : toBottom);
         fabSwitchMoney.startAnimation(visibility? fromBottom : toBottom);
         fabRemoveMoney.startAnimation(visibility? fromBottom : toBottom);
+    }
+
+    @Override
+    public void show(boolean indeterminate) {
+        progress.setVisibility(View.VISIBLE);
+        progress.setIndeterminate(indeterminate);
+
+        fabAddTransaction.setEnabled(false);
+
+        showCount++;
+    }
+
+    @Override
+    public void hide() {
+        if(--showCount != 0)
+            return;
+
+        progress.setVisibility(View.GONE);
+
+        fabAddTransaction.setEnabled(true);
+    }
+
+    @Override
+    public void setMaximus(int maximus) {
+        progress.setIndeterminate(false);
+        progress.setMax(maximus);
+
+        reset();
+    }
+
+    @Override
+    public boolean increment(int value) {
+        int actualValue = progress.getProgress();
+        if(actualValue + value > progress.getMax())
+            return false;
+
+        progress.setProgress(actualValue + value);
+        return true;
+    }
+
+    @Override
+    public void reset() {
+        progress.setProgress(0);
     }
 }
